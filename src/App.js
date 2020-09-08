@@ -1,26 +1,37 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import './App.scss';
+import {connect} from 'react-redux';
+import PropTypes from 'prop-types';
+import LoggedIn from "./components/LoggedIn/LoggedIn";
+import Landing from "./components/Landing/Landing";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+  static get propTypes () {
+    return {
+      loggedInUser: PropTypes.shape({
+        id: PropTypes.number,
+        name: PropTypes.string,
+        wsKey: PropTypes.string,
+      }),
+    };
+  }
+
+  static get defaultProps () {
+    return {
+      loggedInUser: null,
+    };
+  }
+
+  render () {
+    const {loggedInUser} = this.props;
+
+    if (loggedInUser) return <LoggedIn/>;
+    if (!loggedInUser) return <Landing/>;
+  }
 }
 
-export default App;
+const mapStateToProps = state => ({
+  loggedInUser: state.auth.user
+});
+
+export default connect(mapStateToProps)(App);
